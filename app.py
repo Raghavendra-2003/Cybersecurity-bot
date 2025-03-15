@@ -7,7 +7,13 @@ app = Flask(__name__)
 CORS(app)  # Enable frontend communication
 
 # OpenAI API Key (Render environment variable)
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+if not openai_api_key:
+    raise ValueError("Missing OpenAI API Key! Set it in Render's environment variables.")
+
+client = OpenAI(api_key=openai_api_key)
+
 
 @app.route('/ask', methods=['POST'])
 def ask_bot():
