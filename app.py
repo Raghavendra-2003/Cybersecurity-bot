@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 from openai import OpenAI
-pip install --upgrade openai
 
 app = Flask(__name__)
 CORS(app)  # Enable frontend communication
