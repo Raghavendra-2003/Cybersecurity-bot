@@ -7,9 +7,10 @@ app = Flask(__name__)
 CORS(app)  # Enable frontend communication
 
 # OpenAI API Key (Render environment variable)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client=OpenAI(api_key = os.getenv("OPENAI_API_KEY"))
 
 @app.route('/ask', methods=['POST'])
+
 def ask_bot():
     data = request.get_json()
     query = data.get("query", "")
@@ -22,7 +23,7 @@ def ask_bot():
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": query}]
         )
-        return jsonify({"response": response["choices"][0]["message"]["content"]})
+        return jsonify({"response": response.choices[0].message.content})
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
