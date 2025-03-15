@@ -2,29 +2,22 @@ import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
-from dotenv import load_dotenv
 
-# Load environment variables (Render should already load them)
-load_dotenv()
+# Debugging step: Print environment variables to check if OPENAI_API_KEY is set
+print("🔹 Available Environment Variables:", os.environ.keys())
 
-# Get API key from environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# Debugging Step: Check if API key is loaded
 if not OPENAI_API_KEY:
-    print("🚨 ERROR: OpenAI API Key is missing!")
+    print("🚨 ERROR: OPENAI_API_KEY is missing! Check your Render environment variables.")
     raise ValueError("Missing OpenAI API Key! Set it in Render's environment variables.")
-
-print("✅ OpenAI API Key Loaded Successfully.")
 
 # Initialize OpenAI client
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-# Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend communication
+CORS(app)
 
-# API route to handle chatbot queries
 @app.route('/ask', methods=['POST'])
 def ask_bot():
     data = request.get_json()
@@ -34,7 +27,6 @@ def ask_bot():
         return jsonify({"error": "No query provided"}), 400
 
     try:
-        # Generate response using OpenAI GPT
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": query}]
@@ -44,6 +36,5 @@ def ask_bot():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Start the Flask app
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)), debug=True)
