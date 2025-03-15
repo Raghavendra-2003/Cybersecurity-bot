@@ -2,15 +2,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 from openai import OpenAI
+pip install --upgrade openai
 
 app = Flask(__name__)
 CORS(app)  # Enable frontend communication
 
 # OpenAI API Key (Render environment variable)
-client=OpenAI(api_key = os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route('/ask', methods=['POST'])
-
 def ask_bot():
     data = request.get_json()
     query = data.get("query", "")
@@ -19,7 +19,7 @@ def ask_bot():
         return jsonify({"error": "No query provided"}), 400
 
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": query}]
         )
